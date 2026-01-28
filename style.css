@@ -1,239 +1,170 @@
-:root {
-    --bg-color: #0b1121;
-    --card-bg: #162033;
-    --primary: #7c4dff;
-    --text-main: #f8fafc;
-    --text-dim: #94a3b8;
-    --border: rgba(255,255,255,0.08);
-    --transition: all 0.3s ease;
-}
+// --- VARIABLES ---
+const themeBtn = document.getElementById('theme-toggle');
+const html = document.documentElement;
+const sections = document.querySelectorAll('section');
+const navLinks = document.querySelectorAll('.nav-bar a');
 
-[data-theme="light"] {
-    --bg-color: #f1f5f9;
-    --card-bg: #ffffff;
-    --primary: #6366f1;
-    --text-main: #1e293b;
-    --text-dim: #64748b;
-    --border: rgba(0,0,0,0.1);
-}
+// Variable pour la couleur des particules (R, G, B)
+// Par défaut : Turquoise clair
+let particleColorRGB = '94, 234, 212'; 
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { 
-    font-family: 'Poppins', sans-serif; 
-    background: var(--bg-color); 
-    color: var(--text-main); 
-    line-height: 1.6;
-    transition: var(--transition);
-    /* Assure que le contenu passe devant le canvas */
-    position: relative; 
-    z-index: 1; 
-    padding-bottom: 90px; /* Pour que le copyright soit visible en bas de la page*/
-}
+// --- THÈME (JOUR/NUIT) ---
+const updateTheme = (theme) => {
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem('pref-theme', theme);
+    const icon = theme === 'light' ? 'fa-sun' : 'fa-moon';
+    themeBtn.querySelector('i').className = `fa-solid ${icon}`;
 
-.container { 
-    max-width: 900px; 
-    margin: 0 auto; 
-    padding: 0 1.5rem; 
-}
-section { 
-    padding: 100px 0; 
-    min-height: auto; 
-}
-
-h2 { text-align: center; font-size: 2.2rem; margin-bottom: 2.5rem; }
-h2::after { content: ''; display: block; width: 50px; height: 3px; background: var(--primary); margin: 10px auto; }
-
-/* --- HERO & PHOTO ANIMÉE --- */
-.hero { text-align: center; padding-top: 120px; }
-
-.hero-img {
-    width: 220px; height: 220px; margin: 0 auto 2rem;
-    background: var(--primary);
-    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-    animation: morph 8s ease-in-out infinite;
-    overflow: hidden;
-    border: 5px solid var(--card-bg);
-    box-shadow: 0 0 30px rgba(124, 77, 255, 0.2);
-}
-
-.hero-img img { width: 100%; height: 100%; object-fit: cover; }
-
-@keyframes morph {
-    0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-    50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
-    100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-}
-
-.name { font-family: 'Sacramento', cursive; font-size: 4.5rem; margin-bottom: 0.5rem; }
-
-.subtitle { 
-    color: var(--primary); 
-    font-weight: 700; 
-    text-transform: uppercase; 
-    letter-spacing: 3px; 
-    font-size: 1.2rem; 
-}
-
-/* --- RÉSEAUX SOCIAUX --- */
-.social-links { display: flex; justify-content: center; gap: 2rem; margin: 2rem 0; }
-.social-links a { font-size: 1.8rem; color: var(--text-main); transition: var(--transition); text-decoration: none; }
-.social-links a:hover { color: var(--primary); transform: translateY(-5px); }
-
-/* --- CARTES & CONTENU --- */
-.edu-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-    gap: 1.5rem; 
-}
-
-.edu-card, .content-box, .contact-box {
-    background: var(--card-bg); 
-    padding: 2.5rem; 
-    border-radius: 20px;
-    border: 1px solid var(--border); 
-    transition: var(--transition);
-    border-top: 5px solid transparent; 
-}
-
-.edu-card:hover {
-    border-top-color: var(--primary); 
-    transform: translateY(-7px);     
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-}
-
-.edu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-.edu-header h3 { color: var(--primary); }
-.tag { background: var(--primary); color: white; padding: 2px 10px; border-radius: 20px; font-size: 0.75rem; }
-
-/* --- BOUTONS --- */
-.btn {
-    background: var(--primary); 
-    color: white; 
-    border: none; 
-    padding: 0.9rem 2.2rem;
-    border-radius: 12px; 
-    cursor: pointer; 
-    font-weight: 600; 
-    transition: var(--transition);
-}
-.btn.outline { 
-    background: transparent; 
-    border: 2px solid var(--primary); 
-    color: var(--primary); 
-}
-.btn:hover { 
-    transform: translateY(-3px); 
-    box-shadow: 0 10px 20px rgba(124, 77, 255, 0.2); 
-}
-
-/* --- NAVIGATION --- */
-.nav-bar {
-    position: fixed; 
-    bottom: 30px; 
-    left: 50%; 
-    transform: translateX(-50%);
-    background: var(--card-bg); 
-    padding: 0.8rem 1.8rem; 
-    border-radius: 50px;
-    border: 1px solid var(--border); 
-    display: flex; 
-    gap: 1.5rem; 
-    z-index: 1000;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-.nav-bar a { color: var(--text-dim); transition: var(--transition); font-size: 1.2rem; }
-.nav-bar a.active { color: var(--primary); transform: scale(1.2); }
-.theme-switch { border-left: 1px solid var(--border); padding-left: 1rem; cursor: pointer; }
-
-/* --- MODAL --- */
-.modal { 
-    display: none; 
-    position: fixed; 
-    inset: 0; background: rgba(0,0,0,0.85); 
-    z-index: 2000; 
-    padding: 20px; 
-    align-items: center; 
-    justify-content: center; 
-}
-.modal-content { background: var(--card-bg); 
-    width: 100%; max-width: 800px; 
-    padding: 2rem; 
-    border-radius: 25px; 
-    text-align: center; 
-    position: relative; 
-}
-.cv-preview { height: 500px; 
-    background: white; 
-    margin-bottom: 1.5rem; 
-    border-radius: 15px; 
-    overflow: hidden; 
-}
-.cv-preview iframe { 
-    width: 100%; 
-    height: 100%; 
-    border: none; 
-}
-.close-modal { 
-    position: absolute; 
-    top: 15px; 
-    right: 20px; 
-    font-size: 2rem; 
-    cursor: pointer; 
-}
-
-@media (max-width: 650px) {
-    .form-row { grid-template-columns: 1fr; }
-    .name { font-size: 3.2rem; }
-    .nav-bar { 
-        gap: 1rem; 
-        padding: 0.8rem 1.2rem; 
-        width: 90%; 
-        justify-content: center; 
+    // --- LOGIQUE DE CHANGEMENT DE COULEUR DES PARTICULES ---
+    if (theme === 'light') {
+        // Mode Jour : On met les particules en BLEU FONCÉ (presque noir)
+        particleColorRGB = '11, 17, 33'; 
+    } else {
+        // Mode Nuit : On remet les particules en TURQUOISE CLAIR
+        particleColorRGB = '94, 234, 212';
     }
-}
+};
 
-/* --- LISTES COMPÉTENCES --- */
-.skills-list {
-    list-style: none;
-    margin-top: 15px;
-}
+// Init Thème
+const saved = localStorage.getItem('pref-theme');
+if (saved) updateTheme(saved);
+else updateTheme(new Date().getHours() >= 19 || new Date().getHours() < 7 ? 'dark' : 'light');
 
-.skills-list li {
-    margin-bottom: 10px;
-    padding-left: 20px;
-    position: relative;
-    font-size: 0.95rem;
-    color: var(--text-dim);
-}
+themeBtn.onclick = (e) => {
+    e.preventDefault();
+    updateTheme(html.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+};
 
-.skills-list li::before {
-    content: "→";
-    position: absolute;
-    left: 0;
-    color: var(--primary);
-    font-weight: bold;
-}
+// --- SCROLL ACTIVE LINK ---
+window.addEventListener('scroll', () => {
+    let current = "";
+    const scrollPos = window.scrollY + 200; 
 
-/* FOOTER */
-footer {
-    padding: 3rem;
-    text-align: center;
-    border-top: 1px solid #30363d;
-    background: var(--bg-color); /* Pour cacher le canvas en bas */
-    position: relative;
-    z-index: 2;
-}
+    sections.forEach(section => {
+        if (scrollPos >= section.offsetTop) {
+            current = section.getAttribute('id');
+        }
+    });
+
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+            link.classList.add('active');
+        }
+    });
+});
+
+// --- MODALE CV ---
+/*const modal = document.getElementById('cvModal');
+const btnCV = document.getElementById('openCV');
+const closeCV = document.querySelector('.close-modal');
+
+if(btnCV) {
+    btnCV.onclick = () => modal.style.display = "flex";
+    closeCV.onclick = () => modal.style.display = "none";
+    window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
+}*/
+
 
 /* ========================================= */
-/* AJOUT DU FOND CANVAS (PARTICULES)         */
+/* ANIMATION CANVAS (PARTICULES)             */
 /* ========================================= */
-/*#canvas-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;  Place le canvas derrière tout le reste 
-    pointer-events: none;  Permet de cliquer à travers
-}
-/*
+
+/*const canvas = document.getElementById('canvas-bg');
+// Vérification de sécurité au cas où le canvas n'est pas dans le HTML
+if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    const particleCount = 100; 
+    const connectionDistance = 150; 
+    const mouse = { x: null, y: null };
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    window.addEventListener('mousemove', (e) => {
+        mouse.x = e.x;
+        mouse.y = e.y;
+    });
+
+    resize();
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.vx = (Math.random() - 0.5) * 1.5;
+            this.vy = (Math.random() - 0.5) * 1.5;
+            this.radius = 2;
+        }
+
+        draw() {
+            // Utilisation de la variable dynamique particleColorRGB
+            ctx.fillStyle = `rgba(${particleColorRGB}, 0.8)`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        update() {
+            if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+            if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            
+            this.x += this.vx;
+            this.y += this.vy;
+            this.draw();
+        }
+    }
+
+    function initParticles() {
+        particles = [];
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+    }
+
+    function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            
+            // Interaction Souris
+            let dxMouse = particles[i].x - mouse.x;
+            let dyMouse = particles[i].y - mouse.y;
+            let distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+            if (distMouse < connectionDistance) {
+                // Lignes dynamiques vers la souris
+                ctx.strokeStyle = `rgba(${particleColorRGB}, ${1 - distMouse/connectionDistance})`;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(mouse.x, mouse.y);
+                ctx.stroke();
+            }
+
+            // Lignes entre particules
+            for (let j = i + 1; j < particles.length; j++) {
+                let dx = particles[i].x - particles[j].x;
+                let dy = particles[i].y - particles[j].y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < connectionDistance) {
+                    // Lignes dynamiques entre points
+                    ctx.strokeStyle = `rgba(${particleColorRGB}, ${1 - distance/connectionDistance})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+        requestAnimationFrame(animateParticles);
+    }
+
+    initParticles();
+    animateParticles();
+}*/
